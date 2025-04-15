@@ -26,7 +26,7 @@ jobs:
 
       - name: 📤 Copy docker-compose.yml to VPS
         run: |
-          scp -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/home/${{ secrets.VPS_USER }}/traefik/traefik-compose.yml
+          scp -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/home/${{ secrets.VPS_USER }}/traefik/docker-compose.yml
 
       - name: 📝 Create and copy .env file to VPS
         run: |
@@ -50,6 +50,6 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} <<EOF
            cd /home/${{ secrets.VPS_USER }}/traefik
-            docker compose -f traefik-compose.yml config > docker-compose.yml
+            set -a; . ./.env; set +a
             docker stack deploy -c docker-compose.yml ${{ secrets.STACK_NAME }}
           EOF
