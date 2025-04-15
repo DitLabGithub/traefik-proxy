@@ -49,5 +49,7 @@ jobs:
       - name: 🐳 Deploy to Docker Swarm
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} <<EOF
-            docker stack deploy -c /home/${{ secrets.VPS_USER }}/traefik/traefik-compose.yml ${{ secrets.STACK_NAME }}
+           cd /home/${{ secrets.VPS_USER }}/traefik
+            docker compose traefik-compose.yml config > docker-compose.yml
+            docker stack deploy -c docker-compose.yml ${{ secrets.STACK_NAME }}
           EOF
