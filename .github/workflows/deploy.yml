@@ -1,0 +1,31 @@
+name: 🚀 Deploy Traefik to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 🔐 Setup SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
+
+      - name: 📤 Copy docker-compose.yml to VPS
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_edbla_github
+          chmod 600 ~/.ssh/id_edbla_github
+          scp -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/home/${{ secrets.VPS_USER }}/traefik-compose.yml
+
+      - name: 🐳 Deploy to Docker Swarm
+        run: |
+          ssh -i ~/.ssh/id_edbla_github -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} <<EOF
+            docker stack deploy -c /home/${{ secrets.VPS_USER }}/traefik-compose.yml ${{ secrets.STACK_NAME }}
