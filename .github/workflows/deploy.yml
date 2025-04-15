@@ -22,6 +22,18 @@ jobs:
         run: |
           scp -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/home/${{ secrets.VPS_USER }}/traefik-compose.yml
 
+      - name: 🌐 Check and create external network 'web' on VPS
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} <<EOF
+            # Controleer of het netwerk 'web' al bestaat
+            if ! docker network ls --filter name=^web$ --format '{{.Name}}' | grep -q '^web$'; then
+              echo "Network 'web' does not exist. Creating..."
+              docker network create --driver overlay web
+            else
+              echo "Network 'web' already exists."
+            fi
+          EOF
+
       - name: 🐳 Deploy to Docker Swarm
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} <<EOF
