@@ -50,6 +50,6 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} <<EOF
            cd /home/${{ secrets.VPS_USER }}/traefik
-            docker compose traefik-compose.yml config > docker-compose.yml
+            docker compose -f traefik-compose.yml config > docker-compose.yml
             docker stack deploy -c docker-compose.yml ${{ secrets.STACK_NAME }}
           EOF
