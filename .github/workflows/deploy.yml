@@ -18,14 +18,21 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.VPS_SSH_KEY }} # Gebruik de GitHub Secret voor de private key
 
+      - name: 📁 Create Traefik directory on VPS if not exists
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} <<EOF
+            mkdir -p /home/${{ secrets.VPS_USER }}/traefik
+          EOF
+
       - name: 📤 Copy docker-compose.yml to VPS
         run: |
-          scp -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/home/${{ secrets.VPS_USER }}/traefik-compose.yml
+          scp -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/home/${{ secrets.VPS_USER }}/traefik/traefik-compose.yml
 
-      - name: 📝 Zet .env bestand op de server
+      - name: 📝 Create and copy .env file to VPS
         run: |
-          echo "${{ secrets.ENV_FILE }}" > .env
-          scp -o StrictHostKeyChecking=no .env ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/home/${{ secrets.VPS_USER }}/.env
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} <<EOF
+            echo '${{ secrets.ENV_FILE }}' > /home/${{ secrets.VPS_USER }}/traefik/.env
+          EOF
 
       - name: 🌐 Check and create external network 'web' on VPS
         run: |
@@ -42,5 +49,5 @@ jobs:
       - name: 🐳 Deploy to Docker Swarm
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} <<EOF
-            docker stack deploy -c /home/${{ secrets.VPS_USER }}/traefik-compose.yml ${{ secrets.STACK_NAME }}
+            docker stack deploy -c /home/${{ secrets.VPS_USER }}/traefik/traefik-compose.yml ${{ secrets.STACK_NAME }}
           EOF
