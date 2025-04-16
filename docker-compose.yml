@@ -24,7 +24,7 @@ services:
       - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
       - "traefik.http.routers.traefik.service=api@internal"
       - "traefik.http.routers.traefik.middlewares=auth"
-      - "traefik.http.middlewares.auth.basicauth.users=admin:$$2y$05$pBtmy1mXF5M0DQvROmLN8u1MhdeZt9u3f7635WsWwfWxWBl4zRCRi"
+      - "traefik.http.middlewares.auth.basicauth.users=admin:$$2y$$05$$pBtmy1mXF5M0DQvROmLN8u1MhdeZt9u3f7635WsWwfWxWBl4zRCRi"
     networks:
       - web
     secrets:
