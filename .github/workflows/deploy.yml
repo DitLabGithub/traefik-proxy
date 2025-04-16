@@ -57,6 +57,5 @@ jobs:
       - name: 🧹 Opruimen op de VPS na deploy
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_edbla_github ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
-            rm -f /home/${USER}/traefik-compose.yml
-            rm -f /home/${USER}/.env
+            rm rf /home/${USER}/traefik/
           EOF
