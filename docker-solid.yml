@@ -1,0 +1,17 @@
+services:
+  solid-community-server:
+    container_name: "solid-community-server"
+    image: "solidproject/community-server:latest"
+    environment:
+      - "CSS_ROOT_FILE_PATH=/data"
+      - "CSS_BASE_URL=http://localhost"
+      - "TZ=Europe/Amsterdam"
+    ports:
+      - "3000:3000/tcp"
+    volumes:
+      - "solid-config:/config"
+      - "solid-data:/data"
+
+volumes:
+  solid-config:
+  solid-data:

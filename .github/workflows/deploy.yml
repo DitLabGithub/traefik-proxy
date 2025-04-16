@@ -40,7 +40,7 @@ jobs:
             # Controleer of het netwerk 'web' al bestaat
             if ! docker network ls --filter name=web --format '{{.Name}}' | grep '^web$'; then
               echo "Network 'web' does not exist. Creating..."
-              docker network create --driver overlay web
+              docker network create --driver overlay --attachable web
             else
               echo "Network 'web' already exists."
             fi
@@ -52,4 +52,11 @@ jobs:
            cd /home/${{ secrets.VPS_USER }}/traefik
             set -a; . ./.env; set +a
             docker stack deploy -c docker-compose.yml ${{ secrets.STACK_NAME }}
+          EOF
+
+      - name: 🧹 Opruimen op de VPS na deploy
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_edbla_github ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
+            rm -f /home/${USER}/traefik-compose.yml
+            rm -f /home/${USER}/.env
           EOF

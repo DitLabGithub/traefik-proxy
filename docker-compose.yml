@@ -23,8 +23,16 @@ services:
       - "traefik.http.routers.traefik.entrypoints=websecure"
       - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
       - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.routers.traefik.middlewares=auth"
+      - "traefik.http.middlewares.auth.basicauth.usersfile=/run/secrets/traefik_auth_users"
     networks:
       - web
+    secrets:
+      - traefik_auth_users
+
+secrets:
+  traefik_auth_users:
+    external: true
 
 networks:
   web:
