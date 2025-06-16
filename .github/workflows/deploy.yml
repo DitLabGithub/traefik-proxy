@@ -28,11 +28,10 @@ jobs:
         run: |
           scp -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/home/${{ secrets.VPS_USER }}/traefik/docker-compose.yml
 
-      - name: 📝 Create and copy .env file to VPS
+      - name: 📝 Create and copy .env file and users file from secrets to VPS
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} <<EOF
             echo '${{ secrets.ENV_FILE }}' > /home/${{ secrets.VPS_USER }}/traefik/.env
-          ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} <<EOF
             echo '${{ secrets.USERFILE }}' > /home/${{ secrets.VPS_USER }}/traefik/users
           EOF
 
@@ -40,7 +39,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} <<EOF
             # Controleer of het netwerk 'web' al bestaat
-            if ! docker network ls --filter name=web --format '{{.Name}}' | grep '^web$'; then
+            if ! docker network ls --filter name=web --format '{{.Name}}' | grep '^web; then
               echo "Network 'web' does not exist. Creating..."
               docker network create --driver overlay --attachable web
             else
@@ -58,6 +57,6 @@ jobs:
 
       - name: 🧹 Opruimen op de VPS na deploy
         run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_edbla_github ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
-            rm -rf /home/${USER}/traefik/
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
+            rm -rf /home/${{ secrets.VPS_USER }}/traefik/
           EOF
