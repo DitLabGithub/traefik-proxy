@@ -3,37 +3,47 @@ services:
     image: traefik:v3.3
     command:
       - "--log.level=DEBUG"
-      - "--api.dashboard=true"                   
+      - "--api.dashboard=true"                 
       - "--providers.docker=true"                 
-      - "--entrypoints.web.address=:80"           
-      - "--entrypoints.websecure.address=:443"    
-      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
-      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
-      - "--certificatesresolvers.letsencrypt.acme.email=${EMAIL}"
-      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"   
+      - "--entrypoints.dashboard.address=:8080"
     ports:
       - 80:80                                
       - 443:443      
       - 8080:8080                       
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock" 
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./users:/etc/traefik/users"
       - "letsencrypt:/letsencrypt"
     labels:
       - "traefik.enable=true"
+      # Dashboard router configuration
       - "traefik.http.routers.traefik.rule=Host(`${DOMAIN}`)"
-      - "traefik.http.routers.traefik.entrypoints=websecure"
-      - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.traefik.entrypoints=dashboard"
       - "traefik.http.routers.traefik.service=api@internal"
+      
+      # ACME/Let's Encrypt configuration
+      - "traefik.http.middlewares.ssl-redirect.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.ssl-redirect.redirectscheme.permanent=true"
+      - "traefik.http.routers.http-catchall.rule=HostRegexp(`{host:.+}`)"
+      - "traefik.http.routers.http-catchall.entrypoints=web"
+      - "traefik.http.routers.http-catchall.middlewares=ssl-redirect"
+      
+      # TLS configuration
+      - "traefik.http.routers.traefik.tls=${TRAEFIK_TLS}"
+      - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
+      
+      # Let's Encrypt resolver configuration
+      - "traefik.certificatesresolvers.letsencrypt.acme.httpchallenge=true"
+      - "traefik.certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
+      - "traefik.certificatesresolvers.letsencrypt.acme.email=${EMAIL}"
+      - "traefik.certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+
       - "traefik.http.routers.traefik.middlewares=auth"
-      - "traefik.http.middlewares.auth.basicauth.usersfile=/run/secrets/traefik_auth_users"
+      - "traefik.http.middlewares.auth.basicauth.usersfile=/etc/traefik/users"
     networks:
       - web
-    secrets:
-      - traefik_auth_users
-
-secrets:
-  traefik_auth_users:
-    external: true
 
 networks:
   web:
@@ -41,3 +51,4 @@ networks:
 
 volumes:
   letsencrypt:
+
