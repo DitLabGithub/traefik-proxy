@@ -32,6 +32,8 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} <<EOF
             echo '${{ secrets.ENV_FILE }}' > /home/${{ secrets.VPS_USER }}/traefik/.env
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} <<EOF
+            echo '${{ secrets.USERFILE }}' > /home/${{ secrets.VPS_USER }}/traefik/users
           EOF
 
       - name: 🌐 Check and create external network 'web' on VPS
