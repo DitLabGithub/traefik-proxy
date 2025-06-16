@@ -24,9 +24,10 @@ jobs:
             mkdir -p /home/${{ secrets.VPS_USER }}/traefik
           EOF
 
-      - name: 📤 Copy docker-compose.yml to VPS
+      - name: 📤 Copy docker-compose.yml, dockerfile to VPS
         run: |
           scp -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/home/${{ secrets.VPS_USER }}/traefik/docker-compose.yml
+          scp -o StrictHostKeyChecking=no dockerfile ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/home/${{ secrets.VPS_USER }}/traefik/dockerfile
 
       - name: 📝 Create and copy .env file and users file from secrets to VPS
         run: |
