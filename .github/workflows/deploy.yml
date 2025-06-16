@@ -39,7 +39,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} <<EOF
             # Controleer of het netwerk 'web' al bestaat
-            if ! docker network ls --filter name=web --format '{{.Name}}' | grep '^web$; then
+            if ! docker network ls --filter name=web --format '{{.Name}}' | grep '^web$'; then
               echo "Network 'web' does not exist. Creating..."
               docker network create --driver overlay --attachable web
             else
