@@ -9,12 +9,13 @@ services:
       - "--entrypoints.websecure.address=:443"   
       - "--entrypoints.dashboard.address=:8080"
     ports:
-      - 81:80                                
+      - 80:80                                
       - 443:443      
       - 8080:8080                       
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "./users:/etc/traefik/users"
+      - "letsencrypt:/letsencrypt"
     labels:
       - "traefik.enable=true"
       # Dashboard router configuration
@@ -47,4 +48,7 @@ services:
 networks:
   web:
     external: true
+
+volumes:
+  letsencrypt:
 
