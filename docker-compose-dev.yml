@@ -11,9 +11,6 @@ services:
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"   
       - "--entrypoints.dashboard.address=:8080"
-      - "--certificatesresolvers.letsencrypt.acme.email=${EMAIL}"
-      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
-      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
     ports:
       - 80:80                                
       - 443:443      
@@ -25,7 +22,7 @@ services:
       - "traefik.enable=true"
       # Dashboard router configuration
       - "traefik.http.routers.traefik.rule=Host(`${DOMAIN}`)"
-      - "traefik.http.routers.traefik.entrypoints=websecure"
+      - "traefik.http.routers.traefik.entrypoints=dashboard"
       - "traefik.http.routers.traefik.service=api@internal"
       
       # ACME/Let's Encrypt configuration

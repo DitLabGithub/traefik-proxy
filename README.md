@@ -41,8 +41,10 @@ and adjust accordingly to your needs
 
 ### 4. Start Traefik
 
+you still need to build to get the users file in.
+
 ```
-docker compose up -d
+docker compose -f docker-compose-dev.yml up -d --build
 ```
 
 ## Adding services

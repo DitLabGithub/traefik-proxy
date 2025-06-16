@@ -47,6 +47,13 @@ jobs:
             fi
           EOF
 
+      - name: 🔧 Build Docker image on server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} <<EOF
+            cd /home/${{ secrets.VPS_USER }}/traefik
+            docker build -t traefik-dtlb:latest .
+          EOF
+
       - name: 🐳 Deploy to Docker Swarm
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} <<EOF
@@ -55,8 +62,8 @@ jobs:
             docker stack deploy -c docker-compose.yml ${{ secrets.STACK_NAME }}
           EOF
 
-      # - name: 🧹 Opruimen op de VPS na deploy
-      #   run: |
-      #     ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
-      #       rm -rf /home/${{ secrets.VPS_USER }}/traefik/
-      #     EOF
+      - name: 🧹 Opruimen op de VPS na deploy
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
+            rm -rf /home/${{ secrets.VPS_USER }}/traefik/
+          EOF
