@@ -60,7 +60,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} <<EOF
            cd /home/${{ secrets.VPS_USER }}/traefik
             set -a; . ./.env; set +a
-            docker stack deploy -c docker-compose.yml ${{ secrets.STACK_NAME }}
+            docker stack deploy --with-registry-auth -c docker-compose.yml ${{ secrets.STACK_NAME }}
           EOF
 
       - name: 🧹 Opruimen op de VPS na deploy

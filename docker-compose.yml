@@ -1,9 +1,6 @@
 services:
   traefik:
     image: traefik-dtlb:latest
-    build: 
-      context: .
-      dockerfile: dockerfile
     command:
       - "--log.level=DEBUG"
       - "--api.dashboard=true"                 
