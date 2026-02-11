@@ -56,6 +56,14 @@ jobs:
             else
               echo "Network 'traefik-internal' already exists."
             fi
+
+            # Check if network 'docker-sock' exists
+            if ! docker network ls --filter name=docker-sock --format '{{.Name}}' | grep '^docker-sock$'; then
+              echo "Network 'docker-sock' does not exist. Creating..."
+              docker network create --driver overlay --attachable docker-sock
+            else
+              echo "Network 'docker-sock' already exists."
+            fi
           EOF
 
       - name: 🔧 Build Docker image on server
