@@ -12,7 +12,6 @@ services:
       - ALL
     command:
       - '-loglevel=info' # set to debug for far more logging
-      - '-allowfrom=traefik-proxy_traefik'
       - '-listenip=0.0.0.0'
       - '-allowGET=/(v1\..{1,2}/)?(version|containers/.*|services.*|tasks.*|networks.*|nodes.*|events.*)' # this regexp allows readonly access only for requests that traefik needs
       - '-allowHEAD=/_ping'
