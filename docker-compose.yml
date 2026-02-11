@@ -12,7 +12,7 @@ services:
       - ALL
     command:
       - '-loglevel=info' # set to debug for far more logging
-      - '-allowfrom=10.0.2.187'
+      - '-allowfrom=traefik'
       - '-listenip=0.0.0.0'
       - '-allowGET=/(v1\..{1,2}/)?(version|containers/.*|services.*|tasks.*|networks.*|nodes.*|events.*)' # this regexp allows readonly access only for requests that traefik needs
       - '-allowHEAD=/_ping'
@@ -28,6 +28,7 @@ services:
 
   traefik:
     image: traefik-dtlb:${VERSION}
+    container_name: traefik
     build: 
       context: .
       dockerfile: dockerfile
