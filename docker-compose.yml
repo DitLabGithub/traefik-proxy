@@ -7,13 +7,13 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
-      - LISTEN_ADDRESS=0.0.0.0:2375 # Ensure it listens for Traefik
-      - ALLOW_FROM=0.0.0.0/0        # Restricted by the internal network anyway
-      - ALLOW_POST=/GET=/v1\..{1,2}/(version|containers/.*|services.*|tasks.*|networks.*|nodes.*|swarm.*)
+      - LOG_LEVEL=info
+      # Use quotes to ensure the string is passed correctly
+      - LISTEN_ADDRESS=0.0.0.0:2375 
+      # Allow the entire internal overlay network range
+      - ALLOW_FROM=0.0.0.0/0        
+      - ALLOW_GET=/v1\..{1,2}/(version|containers/.*|services.*|tasks.*|networks.*|nodes.*|swarm.*)
       - ALLOW_HEAD=/_ping
-      - SERVICES=1  # Traefik needs to see services
-      - NETWORKS=1  # Traefik needs to see networks
-      - TASKS=1     # Required for Swarm mode
     deploy:
       placement:
         constraints: [node.role == manager]
