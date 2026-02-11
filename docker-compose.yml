@@ -1,6 +1,7 @@
 services:
   docker-proxy:
     image: wollomatic/socket-proxy:1.11.2
+    user: ":999"
     networks:
       - traefik-internal
     volumes:
