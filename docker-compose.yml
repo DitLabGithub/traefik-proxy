@@ -1,19 +1,27 @@
 services:
   docker-proxy:
     image: wollomatic/socket-proxy:1.11.2
-    user: ":999"
+    user: "65534:999"
     networks:
       - traefik-internal
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-    environment:
-      - LOG_LEVEL=info
-      # Use quotes to ensure the string is passed correctly
-      - LISTEN_ADDRESS=0.0.0.0:2375 
-      # Allow the entire internal overlay network range
-      - ALLOW_FROM=0.0.0.0/0        
-      - ALLOW_GET=/v1\..{1,2}/(version|containers/.*|services.*|tasks.*|networks.*|nodes.*|swarm.*)
-      - ALLOW_HEAD=/_ping
+    restart: unless-stopped
+    read_only: true
+    mem_limit: 64M
+    cap_drop:
+      - ALL
+    command:
+      # with this configuration socket-proxy acts similar to the tecnativa proxy. For additional hardening
+      # please refer to the documentation of the wollomatic/socket-proxy image
+      - '-loglevel=info' # set to debug for far more logging
+      - '-allowfrom=traefik'
+      - '-listenip=0.0.0.0'
+      - '-allowGET=/v1\..{1,2}/(version|containers/.*|events.*)' # this regexp allows readonly access only for requests that traefik needs
+      - '-allowHEAD=/_ping'
+      - '-shutdowngracetime=5'
+      - '-watchdoginterval=600'
+      - '-stoponwatchdog'
     deploy:
       placement:
         constraints: [node.role == manager]
