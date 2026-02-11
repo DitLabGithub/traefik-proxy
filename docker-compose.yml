@@ -28,7 +28,6 @@ services:
 
   traefik:
     image: traefik-dtlb:${VERSION}
-    container_name: traefik
     build: 
       context: .
       dockerfile: dockerfile
@@ -80,6 +79,8 @@ services:
       traefik-internal:
         aliases:
           - traefik
+    deploy:
+      endpoint_mode: dnsrr
 
 
 
