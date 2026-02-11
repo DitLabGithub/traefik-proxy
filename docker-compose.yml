@@ -21,7 +21,8 @@ services:
       - '-stoponwatchdog'
     deploy:
       resources:
-        mem_limit: 64M
+        limits:
+          memory: 64M
       placement:
         constraints: [node.role == manager]
 
