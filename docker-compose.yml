@@ -23,6 +23,8 @@ services:
     build: 
       context: .
       dockerfile: dockerfile
+    depends_on:
+      - docker-proxy
     command:
       - "--log.level=DEBUG"
       - "--api.dashboard=true"           
