@@ -1,13 +1,14 @@
 # Traefik Proxy Setup
 
-This repository contains a Docker Compose configuration for setting up Traefik as a reverse proxy. It's designed to be flexible for both development and production environments, with options to enable/disable TLS, authentication, and other features.
+This repository contains a Docker Compose configuration for setting up Traefik as a reverse proxy. It is designed to be flexible, supporting both **local development** and **production Docker Swarm** environments.
 
-## Quick Start
+## Setup Guide
 
-### 1. Create the external Docker network
+### 1. Create External Networks
 
-Before starting Traefik, you need to create the external Docker network that will be used by Traefik and your applications:
+Traefik uses external networks to communicate with services and the Docker socket proxy.
 
+**For Local Development:**
 ```bash
 docker network create web
 ```

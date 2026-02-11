@@ -41,12 +41,20 @@ jobs:
       - name: 🌐 Check and create external network 'web' on VPS
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} <<EOF
-            # Controleer of het netwerk 'web' al bestaat
+            # Check if network 'web' exists
             if ! docker network ls --filter name=web --format '{{.Name}}' | grep '^web$'; then
               echo "Network 'web' does not exist. Creating..."
               docker network create --driver overlay --attachable web
             else
               echo "Network 'web' already exists."
+            fi
+            
+            # Check if network 'traefik-internal' exists
+            if ! docker network ls --filter name=traefik-internal --format '{{.Name}}' | grep '^traefik-internal$'; then
+              echo "Network 'traefik-internal' does not exist. Creating..."
+              docker network create --driver overlay --attachable traefik-internal
+            else
+              echo "Network 'traefik-internal' already exists."
             fi
           EOF
 
