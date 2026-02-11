@@ -1,6 +1,6 @@
 services:
   docker-proxy:
-    image: wollomatic/socket-proxy:latest
+    image: wollomatic/socket-proxy:1.11.2
     networks:
       - traefik-internal
     volumes:
@@ -12,6 +12,7 @@ services:
     deploy:
       placement:
         constraints: [node.role == manager]
+
   traefik:
     image: traefik-dtlb:${VERSION}
     build: 
@@ -19,7 +20,7 @@ services:
       dockerfile: dockerfile
     command:
       - "--log.level=DEBUG"
-      - "--api.dashboard=true"                 
+      - "--api.dashboard=true"           
       - "--providers.docker=true"
       - "--providers.docker.endpoint=tcp://docker-proxy:2375"        
       - "--entrypoints.web.address=:80"
